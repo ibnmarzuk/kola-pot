@@ -25,6 +25,15 @@ Clarity 6 (epoch 4.0). Transfers into the contract use `current-contract`. Trans
 
 Deployer address (testnet): `STNYRC17AZ0PZ74AZJA0Z0YG140FDKP7MKGA9MM2`
 
+Contract: [`STNYRC17AZ0PZ74AZJA0Z0YG140FDKP7MKGA9MM2.kola-pot`](https://explorer.hiro.so/contract/STNYRC17AZ0PZ74AZJA0Z0YG140FDKP7MKGA9MM2.kola-pot?chain=testnet)
+
+Deploy transaction: [`0x488124f2bc4dc3873ad6aad22985ed363ae5bbdf30599f387cff147a40ab17a8`](https://explorer.hiro.so/txid/488124f2bc4dc3873ad6aad22985ed363ae5bbdf30599f387cff147a40ab17a8?chain=testnet)
+
+On-chain interactions already confirmed:
+
+- Open “Brass lamp for the reading room” and chip in 1 of 3 STX
+- Open “Kola for the visitors”, chip in 1 STX, and claim it
+
 The mnemonic is not in git. Copy `kola-pot/contracts/settings/Testnet.example.toml` to `Testnet.toml` and fill it in locally.
 
 ## Develop

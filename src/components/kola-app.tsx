@@ -193,7 +193,7 @@ export function KolaApp() {
     }
   }
 
-  const pooled = pots.reduce((sum, pot) => sum + pot.raised, 0n);
+  const pooled = pots.reduce((sum, pot) => sum + (pot.claimed ? 0n : pot.raised), 0n);
   const undeployed = loadError.includes("NoSuchContract");
 
   return (

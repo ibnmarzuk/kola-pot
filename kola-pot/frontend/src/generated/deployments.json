@@ -1,1 +1,11 @@
-{ "network": "", "deployed_at": "", "contracts": {} }
+{
+  "network": "testnet",
+  "deployed_at": "2026-09-29T11:42:22.276793980+00:00",
+  "contracts": {
+    "kola-pot": {
+      "contract_id": "STNYRC17AZ0PZ74AZJA0Z0YG140FDKP7MKGA9MM2.kola-pot",
+      "tx_id": "0x488124f2bc4dc3873ad6aad22985ed363ae5bbdf30599f387cff147a40ab17a8",
+      "block_height": 0
+    }
+  }
+}

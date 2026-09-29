@@ -1,0 +1,64 @@
+name: Deploy kola-pot to testnet
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: kola-pot
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Clarinet and stacksdapp
+        working-directory: .
+        run: |
+          set -euo pipefail
+          curl -fsSL -o /tmp/clarinet.tar.gz https://github.com/stx-labs/clarinet/releases/download/v3.24.1/clarinet-linux-x64-glibc.tar.gz
+          tar -xzf /tmp/clarinet.tar.gz -C /tmp
+          sudo install -m 755 /tmp/clarinet /usr/local/bin/clarinet
+          curl -fsSL -o /tmp/stacksdapp.tar.gz https://github.com/scaffold-stack/scaffold-stack/releases/download/v0.2.2/stacksdapp-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf /tmp/stacksdapp.tar.gz -C /tmp
+          sudo install -m 755 /tmp/stacksdapp-x86_64-unknown-linux-gnu/stacksdapp /usr/local/bin/stacksdapp
+          clarinet --version
+          stacksdapp --version
+
+      - name: Request testnet STX
+        env:
+          ADDR: STNYRC17AZ0PZ74AZJA0Z0YG140FDKP7MKGA9MM2
+        run: |
+          set -euo pipefail
+          curl -sS -X POST "https://api.testnet.hiro.so/extended/v1/faucets/stx?address=${ADDR}" | tee /tmp/faucet.json
+          echo
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            BAL=$(curl -sS "https://api.testnet.hiro.so/extended/v1/address/${ADDR}/stx" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("balance","0"))')
+            echo "balance $BAL"
+            if [ "$BAL" != "0" ]; then
+              exit 0
+            fi
+            sleep 15
+          done
+          echo "Faucet did not fund the deployer in time"
+          exit 1
+
+      - name: Write deployer settings
+        env:
+          MNEMONIC: ${{ secrets.DEPLOYER_MNEMONIC }}
+        run: |
+          set -euo pipefail
+          test -n "$MNEMONIC"
+          cat > contracts/settings/Testnet.toml << EOF
+          [network]
+          name = "testnet"
+          stacks_node_rpc_address = "https://api.testnet.hiro.so"
+          deployment_fee_rate = 50
+
+          [accounts.deployer]
+          mnemonic = "$MNEMONIC"
+          derivation = "m/44'/5757'/0'/0/0"
+          EOF
+
+      - name: Deploy contract
+        run: stacksdapp deploy --network testnet --yes --wait-confirm --contract kola-pot
